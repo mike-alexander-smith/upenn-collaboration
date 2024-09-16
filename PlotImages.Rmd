@@ -33,7 +33,7 @@ channels = channelNames(images)
 for(sampleID in names(images)) {
   
   outdir = file.path('~/data/images',sampleID)
-  mkdir(outdir)
+  dir.create(outdir)
   subImage <- images[sampleID]
   subImage <- cytomapper::normalize(subImage, separateImages = TRUE)
   subImage <- cytomapper::normalize(subImage, inputRange = c(0, 0.2))
@@ -50,9 +50,10 @@ for(sampleID in names(images)) {
             save_plot = list(filename = paste('~/data/images/',
                                               sampleID,
                                               '/',
+                                              sampleID,
                                               '_',
                                               channel,
-                                              '.png',sep = '')
+                                              '.png',sep = ''),
                              scale = 1))
   }
   
