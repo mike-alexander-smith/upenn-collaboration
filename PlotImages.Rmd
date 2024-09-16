@@ -1,0 +1,61 @@
+---
+title: "PlotImages"
+author: "Mike Smith"
+date: "2024-09-16"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(cytomapper)
+```
+
+```{r}
+images = readRDS('~/data/RObjs/images.rds')
+```
+
+
+
+```{r}
+sampleIDs = names(images)
+```
+
+
+```{r}
+channels = channelNames(images)
+```
+
+
+```{r}
+for(sampleID in names(images)) {
+  
+  outdir = file.path('~/data/images',sampleID)
+  mkdir(outdir)
+  subImage <- images[sampleID]
+  subImage <- cytomapper::normalize(subImage, separateImages = TRUE)
+  subImage <- cytomapper::normalize(subImage, inputRange = c(0, 0.2))
+
+
+  for(channel in channels) {
+  
+  colVector = list(c(0,5,1))
+  names(colVector) = channel
+  plotPixels(subImage, 
+           colour_by = channel,
+           bcg = colVector,
+           legend = list(margin = 0.5),
+            save_plot = list(filename = paste('~/data/images/',
+                                              sampleID,
+                                              '/',
+                                              '_',
+                                              channel,
+                                              '.png',sep = '')
+                             scale = 1))
+  }
+  
+}
+```
+

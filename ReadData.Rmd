@@ -1,0 +1,63 @@
+---
+title: "Read data"
+author: "Mike Smith"
+date: "2024-09-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### load required libraries
+```{r}
+library(imcRtools)
+library(cytomapper)
+```
+
+### read images
+```{r}
+images <- loadImages("~/data/tiff")
+```
+### read masks
+```{r}
+masks <- loadImages("~/data/masks", as.is = TRUE)
+```
+
+```{r}
+all.equal(names(images), names(masks))
+```
+### set channel names from felix's table
+
+```{r}
+channelNames = read.csv('~/data/horizon tiff.csv')
+```
+
+```{r}
+channelNames(images) = channelNames$Marker
+
+```
+
+### set mcols
+```{r}
+mcols(images) <- mcols(masks) <- DataFrame(sampleid = names(images),
+                                          visit = ifelse(grepl('D85',names(images)),'85','1'))
+```
+
+
+```{r}
+saveRDS(masks, "~/data/RObjs/masks.rds")
+saveRDS(images, "~/data/RObjs/images.rds")
+
+```
+
+```{r}
+
+spe <- cytomapper::measureObjects(masks, 
+                      image = images, 
+                      img_id = "sampleid",
+                      return_as = "spe")
+
+saveRDS(spe, "~/data/RObjs/spe.rds")
+```
+

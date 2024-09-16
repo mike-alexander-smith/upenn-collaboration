@@ -1,0 +1,45 @@
+---
+title: "ConvertRtoSCE"
+author: "Mike Smith"
+date: "2024-09-15"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+### load necessary libraries
+```{r}
+library(SingleCellExperiment)
+```
+### load r object
+
+```{r}
+load('~/data/r')
+```
+
+
+### bind rows of R object into one big matrix
+```{r}
+all = do.call(rbind,r)
+
+
+# Create a vector of matrix names matching the rows in each matrix
+sampleids <- unlist(sapply(names(r), function(name) {
+  rep(name, nrow(r[[name]]))
+}))
+
+sce = SingleCellExperiment(list(counts = t(all)),
+                           colData = DataFrame(cellid = rownames(all),
+                                               sampleid = sampleids),
+                           rowData = DataFrame(channel = colnames(all)))
+
+```
+
+### save objects
+```{r}
+saveRDS(sce, "~/data/RObjs/rsce.rds")
+```
+
